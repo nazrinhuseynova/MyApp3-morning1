@@ -3,47 +3,53 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 type ProductCardProps = {
   item: Product;
+  columns: number;
   onAdd: (item: Product) => void;
   onRemove: (item: Product) => void;
 };
 
 export default function ProductCard({
   item,
+  columns,
   onAdd,
   onRemove,
 }: ProductCardProps) {
   return (
-    <View style={styles.card}>
-      <View style={styles.topRow}>
-        <Text style={styles.name} numberOfLines={2}>
-          {item.name}
-        </Text>
+    <View style={[styles.cell, { width: `${100 / columns}%` as const }]}>
+      <View style={styles.card}>
+        <View style={styles.topRow}>
+          <Text style={styles.name} numberOfLines={2}>
+            {item.name}
+          </Text>
+          <TouchableOpacity
+            onPress={() => onRemove(item)}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          >
+            <Text style={styles.removeText}>✕</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={styles.price}>{formatPrice(item.price)}</Text>
         <TouchableOpacity
-          onPress={() => onRemove(item)}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={styles.addBtn}
+          activeOpacity={0.7}
+          onPress={() => onAdd(item)}
         >
-          <Text style={styles.removeText}>✕</Text>
+          <Text style={styles.addText}>+ Əlavə et</Text>
         </TouchableOpacity>
       </View>
-      <Text style={styles.price}>{formatPrice(item.price)}</Text>
-      <TouchableOpacity
-        style={styles.addBtn}
-        activeOpacity={0.7}
-        onPress={() => onAdd(item)}
-      >
-        <Text style={styles.addText}>+ Əlavə et</Text>
-      </TouchableOpacity>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  cell: {
+    padding: 6,
+  },
   card: {
-    width: "48%",
+    flex: 1,
     backgroundColor: "#fff",
     padding: 12,
     borderRadius: 12,
-    marginBottom: 12,
     justifyContent: "space-between",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
