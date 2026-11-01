@@ -15,14 +15,16 @@ import {
   Alert,
   FlatList,
   Keyboard,
+  ScrollView,
   SectionList,
-  StatusBar,
   StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type MarketSection = {
   key: string;
@@ -36,6 +38,10 @@ export default function App() {
   const [selected, setSelected] = useState<Filter>(ALL);
   const [name, setName] = useState<string>("");
   const [price, setPrice] = useState<string>("");
+
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
+  const columns = isLandscape ? 3 : 2;
 
   const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
@@ -94,91 +100,121 @@ export default function App() {
     Keyboard.dismiss();
   };
 
+  const renderChip = (item: Filter) => {
+    const active = item === selected;
+    return (
+      <TouchableOpacity
+        key={item}
+        style={[styles.chip, active && styles.chipActive]}
+        onPress={() => setSelected(item)}
+      >
+        <Text style={[styles.chipText, active && styles.chipTextActive]}>
+          {CATEGORY_ICONS[item]} {item}
+        </Text>
+      </TouchableOpacity>
+    );
+  };
+
+  const hint = (
+    <Text style={styles.hint}>
+      {selected === ALL
+        ? "Məhsul əlavə etmək üçün kateqoriya seçin"
+        : `"${selected}" kateqoriyasına məhsul əlavə et`}
+    </Text>
+  );
+
+  const formFields = (
+    <>
+      <TextInput
+        style={[styles.input, !isLandscape && styles.nameInput]}
+        placeholder="Məhsulun adı"
+        placeholderTextColor="#888"
+        value={name}
+        onChangeText={setName}
+      />
+      <TextInput
+        style={[styles.input, !isLandscape && styles.priceInput]}
+        placeholder="Qiymət"
+        placeholderTextColor="#888"
+        value={price}
+        onChangeText={setPrice}
+        keyboardType="decimal-pad"
+        returnKeyType="done"
+        onSubmitEditing={handleSubmit}
+      />
+      <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
+        <Text style={styles.submitText}>Əlavə et</Text>
+      </TouchableOpacity>
+    </>
+  );
+
+  const productList = (
+    <SectionList
+      sections={sections}
+      keyExtractor={(item) => item[0].category}
+      keyboardShouldPersistTaps="handled"
+      contentContainerStyle={styles.listContent}
+      ListEmptyComponent={
+        <Text style={styles.empty}>Bu kateqoriyada məhsul yoxdur</Text>
+      }
+      renderSectionHeader={({ section }) => (
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>
+            {CATEGORY_ICONS[section.title]} {section.title}
+          </Text>
+          <Text style={styles.sectionCount}>{section.data[0].length}</Text>
+        </View>
+      )}
+      renderItem={({ item }) => (
+        <View style={styles.productRow}>
+          {item.map((product) => (
+            <ProductCard
+              key={product.id}
+              item={product}
+              columns={columns}
+              onAdd={handleAddToCart}
+              onRemove={handleRemoveProduct}
+            />
+          ))}
+        </View>
+      )}
+    />
+  );
+
   return (
-    <View style={[styles.container, { paddingTop: StatusBar.currentHeight }]}>
-      <Header count={cart.length} total={cartTotal} />
+    <SafeAreaView style={styles.container}>
+      <Header count={cart.length} total={cartTotal} isLandscape={isLandscape} />
 
-      <FlatList
-        data={FILTERS}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item}
-        style={styles.chipList}
-        contentContainerStyle={styles.chipContent}
-        renderItem={({ item }) => {
-          const active = item === selected;
-          return (
-            <TouchableOpacity
-              style={[styles.chip, active && styles.chipActive]}
-              onPress={() => setSelected(item)}
-            >
-              <Text style={[styles.chipText, active && styles.chipTextActive]}>
-                {CATEGORY_ICONS[item]} {item}
-              </Text>
-            </TouchableOpacity>
-          );
-        }}
-      />
-
-      <Text style={styles.hint}>
-        {selected === ALL
-          ? "Məhsul əlavə etmək üçün kateqoriya seçin"
-          : `"${selected}" kateqoriyasına məhsul əlavə et`}
-      </Text>
-
-      <View style={styles.inputRow}>
-        <TextInput
-          style={[styles.input, styles.nameInput]}
-          placeholder="Məhsulun adı"
-          placeholderTextColor="#888"
-          value={name}
-          onChangeText={setName}
-        />
-        <TextInput
-          style={[styles.input, styles.priceInput]}
-          placeholder="Qiymət"
-          placeholderTextColor="#888"
-          value={price}
-          onChangeText={setPrice}
-          keyboardType="decimal-pad"
-          returnKeyType="done"
-          onSubmitEditing={handleSubmit}
-        />
-        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
-          <Text style={styles.submitText}>Əlavə et</Text>
-        </TouchableOpacity>
-      </View>
-
-      <SectionList
-        sections={sections}
-        keyExtractor={(item) => item[0].category}
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.listContent}
-        ListEmptyComponent={
-          <Text style={styles.empty}>Bu kateqoriyada məhsul yoxdur</Text>
-        }
-        renderSectionHeader={({ section }) => (
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>
-              {CATEGORY_ICONS[section.title]} {section.title}
-            </Text>
-            <Text style={styles.sectionCount}>{section.data[0].length}</Text>
-          </View>
-        )}
-        renderItem={({ item }) => (
-          <View style={styles.productRow}>
-            {item.map((product) => (
-              <ProductCard
-                key={product.id}
-                item={product}
-                onAdd={handleAddToCart}
-                onRemove={handleRemoveProduct}
-              />
-            ))}
-          </View>
-        )}
-      />
-    </View>
+      {isLandscape ? (
+        <View style={styles.landscapeBody}>
+          <ScrollView
+            style={styles.sidePanel}
+            contentContainerStyle={styles.sideContent}
+            keyboardShouldPersistTaps="handled"
+          >
+            <View style={styles.chipWrap}>{FILTERS.map(renderChip)}</View>
+            {hint}
+            <View style={styles.formColumn}>{formFields}</View>
+          </ScrollView>
+          <View style={styles.listPanel}>{productList}</View>
+        </View>
+      ) : (
+        <>
+          <FlatList
+            data={FILTERS}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            keyExtractor={(item) => item}
+            style={styles.chipList}
+            contentContainerStyle={styles.chipContent}
+            renderItem={({ item }) => renderChip(item)}
+          />
+          {hint}
+          <View style={styles.inputRow}>{formFields}</View>
+          {productList}
+        </>
+      )}
+    </SafeAreaView>
   );
 }
 
@@ -186,6 +222,28 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f4f6f8",
+  },
+  landscapeBody: {
+    flex: 1,
+    flexDirection: "row",
+    gap: 12,
+    paddingHorizontal: 12,
+    paddingTop: 10,
+  },
+  sidePanel: {
+    flex: 4,
+  },
+  sideContent: {
+    gap: 10,
+    paddingBottom: 16,
+  },
+  listPanel: {
+    flex: 6,
+  },
+  chipWrap: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
   },
   chipList: {
     flexGrow: 0,
@@ -216,7 +274,7 @@ const styles = StyleSheet.create({
     color: "#fff",
   },
   hint: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 4,
     marginBottom: 6,
     color: "#555",
     fontSize: 13,
@@ -227,6 +285,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     gap: 8,
     marginBottom: 8,
+  },
+  formColumn: {
+    gap: 8,
   },
   input: {
     borderWidth: 1,
@@ -248,13 +309,14 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     paddingHorizontal: 14,
     borderRadius: 8,
+    alignItems: "center",
   },
   submitText: {
     color: "#fff",
     fontWeight: "600",
   },
   listContent: {
-    paddingHorizontal: 12,
+    paddingHorizontal: 6,
     paddingBottom: 32,
     flexGrow: 1,
   },
@@ -264,6 +326,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#f4f6f8",
     paddingVertical: 10,
+    paddingHorizontal: 6,
   },
   sectionTitle: {
     fontSize: 20,
@@ -284,7 +347,7 @@ const styles = StyleSheet.create({
   productRow: {
     flexDirection: "row",
     flexWrap: "wrap",
-    justifyContent: "space-between",
+    justifyContent: "flex-start",
     alignItems: "stretch",
   },
   empty: {
