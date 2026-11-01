@@ -1,376 +1,182 @@
-const users = [
-  {
-    id: 1,
-    name: "Elnur",
-    job: "Developer",
-    city: "Baku",
-    image:
-      "https://img.magnific.com/premium-vector/professional-male-avatar-profile-picture-employee-work_1322206-66523.jpg?semt=ais_hybrid&w=740&q=80",
-  },
-  {
-    id: 2,
-    name: "John",
-    job: "QA Engineer",
-    city: "Ganja",
-    image:
-      "https://static.vecteezy.com/system/resources/previews/024/183/502/non_2x/male-avatar-portrait-of-a-young-man-with-a-beard-illustration-of-male-character-in-modern-color-style-vector.jpg",
-  },
-  {
-    id: 3,
-    name: "Murad",
-    job: "Designer",
-    city: "London",
-    image:
-      "https://png.pngtree.com/png-clipart/20230930/original/pngtree-man-avatar-isolated-png-image_13022161.png",
-  },
-  {
-    id: 4,
-    name: "Tural",
-    job: "Developer",
-    city: "Baku",
-    image:
-      "https://img.magnific.com/premium-vector/professional-male-avatar-profile-picture-employee-work_1322206-66523.jpg?semt=ais_hybrid&w=740&q=80",
-  },
-  {
-    id: 5,
-    name: "Ali",
-    job: "IT Specialist",
-    city: "Lankaran",
-    image: "https://cdn-icons-png.flaticon.com/512/3641/3641963.png",
-  },
-  {
-    id: 6,
-    name: "Ayan",
-    job: "Manager",
-    city: "Baku",
-    image:
-      "https://img.magnific.com/free-vector/woman-with-braided-hair-illustration_1308-174675.jpg?semt=ais_hybrid&w=740&q=80",
-  },
-  {
-    id: 7,
-    name: "Leyla",
-    job: "QA Engineer",
-    city: "Baku",
-    image:
-      "https://img.magnific.com/free-vector/woman-floral-traditional-costume_1308-176159.jpg?semt=ais_hybrid&w=740&q=80",
-  },
-  {
-    id: 8,
-    name: "Jale",
-    job: "Developer",
-    city: "Baku",
-    image:
-      "https://t4.ftcdn.net/jpg/08/23/95/89/360_F_823958944_1c9covIC7Tl7eyJtWoTiXc0L4vP6f43q.jpg",
-  },
-  {
-    id: 9,
-    name: "Sevinc",
-    job: "QA Engineer",
-    city: "Baku",
-    image:
-      "https://st3.depositphotos.com/3428903/15827/v/1600/depositphotos_158276272-stock-illustration-confident-business-asian-woman-avatar.jpg",
-  },
-  {
-    id: 10,
-    name: "Gulcan",
-    job: "Finance Specialist",
-    city: "Baku",
-    image:
-      "https://www.shutterstock.com/image-vector/face-happy-girl-avatar-laughing-260nw-1459862774.jpg",
-  },
-  {
-    id: 11,
-    name: "Aysel",
-    job: "QA Engineer",
-    city: "Baku",
-    image:
-      "https://st3.depositphotos.com/3428903/15827/v/1600/depositphotos_158276272-stock-illustration-confident-business-asian-woman-avatar.jpg",
-  },
-  {
-    id: 12,
-    name: "Yasemen",
-    job: "Finance Specialist",
-    city: "Baku",
-    image:
-      "https://www.shutterstock.com/image-vector/face-happy-girl-avatar-laughing-260nw-1459862774.jpg",
-  },
-];
-
-import FoodCard, { FoodItem } from "@/components/FoodCard";
 import Header from "@/components/Header";
+import ProductCard from "@/components/ProductCard";
 import {
-  FontAwesome,
-  FontAwesome5,
-  Ionicons,
-  MaterialCommunityIcons,
-} from "@expo/vector-icons";
+  ALL,
+  CATEGORIES,
+  CATEGORY_ICONS,
+  Category,
+  FILTERS,
+  Filter,
+  initialProducts,
+  Product,
+} from "@/constants/market";
 import { useState } from "react";
 import {
   Alert,
-  Button,
   FlatList,
-  Image,
   Keyboard,
-  ScrollView,
+  SectionList,
   StatusBar,
   StyleSheet,
   Text,
   TextInput,
-  TouchableHighlight,
   TouchableOpacity,
   View,
 } from "react-native";
 
-// export default function App() {
-//   return (
-//     <ScrollView
-//       contentContainerStyle={[
-//         styles.container,
-//         { paddingTop: StatusBar.currentHeight },
-//       ]}
-//     >
-//       {users.map((user) => (
-//         <View key={user.id} style={styles.card}>
-//           <Image source={{ uri: user.image }} style={styles.avatar} />
-//           <Text style={styles.name}>
-//             <MaterialCommunityIcons
-//               name="human"
-//               size={22}
-//               color="deepskyblue"
-//             />
-//             {user.name}
-//           </Text>
-
-//           <Text style={styles.detail}>{user.job}</Text>
-//           <Text style={styles.detail}>
-//             <Ionicons name="location" size={20} color="deepskyblue" />
-//             {user.city}
-//           </Text>
-//         </View>
-//       ))}
-//     </ScrollView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flexDirection: "row",
-//     flexWrap: "wrap",
-//     justifyContent: "space-around",
-//     paddingVertical: 20,
-//   },
-//   card: {
-//     width: "45%",
-//     backgroundColor: "#f9f9f9",
-//     marginBottom: 20,
-//     borderRadius: 10,
-//     padding: 10,
-//     alignItems: "center",
-//     shadowColor: "deepskyblue",
-//     shadowOffset: { width: 0, height: 5 },
-//     shadowOpacity: 0.5,
-//     //only for Android
-//     elevation: 10,
-//   },
-//   avatar: {
-//     width: 80,
-//     height: 80,
-//     borderRadius: 40,
-//     marginBottom: 8,
-//   },
-//   name: {
-//     fontSize: 18,
-//     fontWeight: "bold",
-//   },
-//   detail: {
-//     fontSize: 14,
-//     color: "#444",
-//   },
-// });
-
-// export default function App() {
-//   const [balance, setBalance] = useState<number>(0);
-
-//   const handleAddMoney = () => {
-//     setBalance(balance + 50);
-//   };
-
-//   const handleWithDraw = () => {
-//     if (balance <= 30) {
-//       Alert.alert("Warning", "You do not have enough money!");
-//       return;
-//     }
-//     setBalance(balance - 30);
-//   };
-
-//   const handleReset = () => {
-//     Alert.alert("Resetting", "Balance resetted");
-//     setBalance(0);
-//   };
-
-//   return (
-//     <View style={[styles.container, { paddingTop: StatusBar.currentHeight }]}>
-//       <Text style={styles.title}>
-//         <FontAwesome
-//           name="money"
-//           size={26}
-//           color={"#607d8b"}
-//           style={{ marginRight: 5 }}
-//         />
-//         Simple Balance
-//       </Text>
-
-//       <Text
-//         style={[
-//           styles.balance,
-//           { color: balance > 0 ? "#4caf50" : balance < 0 ? "#f44336" : "#333" },
-//         ]}
-//       >
-//         Balance : {balance}$
-//       </Text>
-
-//       <View style={styles.buttonContainer}>
-//         <TouchableOpacity
-//           style={[styles.button, styles.green]}
-//           onPress={handleAddMoney}
-//         >
-//           <Text style={styles.buttonText}>
-//             <FontAwesome name="plus" size={22} color="#607d8b" />{" "}
-//             <Text>50 $</Text>
-//           </Text>
-//         </TouchableOpacity>
-//         <TouchableOpacity
-//           style={[styles.button, styles.red]}
-//           onPress={handleWithDraw}
-//         >
-//           <Text style={styles.buttonText}>
-//             <FontAwesome name="minus" size={22} color="#607d8b" />{" "}
-//             <Text>30 $</Text>
-//           </Text>
-//         </TouchableOpacity>
-
-//         <TouchableHighlight
-//           style={[styles.button, styles.gray]}
-//           onLongPress={handleReset}
-//         >
-//           <Text style={styles.buttonText}>Reset</Text>
-//         </TouchableHighlight>
-//       </View>
-//     </View>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   container: {
-//     flex: 1,
-//     backgroundColor: "#fff",
-//     justifyContent: "center",
-//     margin: 24,
-//   },
-//   title: {
-//     fontSize: 26,
-//     fontWeight: "bold",
-//     textAlign: "center",
-//     marginBottom: 30,
-//   },
-//   balance: {
-//     fontSize: 30,
-//     fontWeight: "bold",
-//     textAlign: "center",
-//   },
-//   buttonContainer: {
-//     flexDirection: "column",
-//     gap: 15,
-//   },
-//   button: {
-//     paddingVertical: 14,
-//     borderRadius: 8,
-//     alignItems: "center",
-//   },
-//   buttonText: {
-//     color: "#fff",
-//     fontSize: 22,
-//     flexDirection: "row",
-//     justifyContent: "center",
-//     alignItems: "center",
-//   },
-//   green: {
-//     backgroundColor: "#4caf50",
-//   },
-//   red: {
-//     backgroundColor: "#f44336",
-//   },
-//   gray: {
-//     backgroundColor: "#607d8b",
-//   },
-// });
-
-const initialItems = [
-  { id: 1, name: "Pizza", price: 10.5 },
-  { id: 2, name: "Burger", price: 8.1 },
-  { id: 3, name: "Sushi", price: 24 },
-  { id: 4, name: "Salad", price: 12 },
-  { id: 5, name: "Shaurma", price: 5 },
-];
+type MarketSection = {
+  key: string;
+  title: Category;
+  data: Product[][];
+};
 
 export default function App() {
-  const [cart, setCart] = useState<FoodItem[]>([]);
-  const [foodItems, setFoodItems] = useState<FoodItem[]>(initialItems);
+  const [products, setProducts] = useState<Product[]>(initialProducts);
+  const [cart, setCart] = useState<Product[]>([]);
+  const [selected, setSelected] = useState<Filter>(ALL);
+  const [name, setName] = useState<string>("");
+  const [price, setPrice] = useState<string>("");
 
-  const [newFood, setNewFood] = useState<string>("");
+  const cartTotal = cart.reduce((sum, item) => sum + item.price, 0);
 
-  const handleAdd = (item: FoodItem) => {
+  const sections: MarketSection[] = CATEGORIES.filter(
+    (c) => selected === ALL || c === selected,
+  )
+    .map((c) => ({
+      key: c,
+      title: c,
+      data: [products.filter((p) => p.category === c)],
+    }))
+    .filter((s) => s.data[0].length > 0);
+
+  const handleAddToCart = (item: Product) => {
     setCart([...cart, item]);
-    Alert.alert("Cart Summary", `${item.name} added to cart!`);
+    Alert.alert("Səbət", `${item.name} səbətə əlavə olundu`);
   };
 
-  const handleNewFoodSubmit = () => {
-    if (!newFood.trim()) {
-      Alert.alert("Required", "Please fill food name input!");
+  const handleRemoveProduct = (item: Product) => {
+    setProducts(products.filter((p) => p.id !== item.id));
+    setCart(cart.filter((p) => p.id !== item.id));
+  };
+
+  const handleSubmit = () => {
+    if (selected === ALL) {
+      Alert.alert(
+        "Kateqoriya seçilməyib",
+        "Məhsul əlavə etmək üçün əvvəlcə kateqoriya seçin.",
+      );
       return;
     }
 
-    const newItem: FoodItem = {
-      id: foodItems.length + 1,
-      name: newFood,
-      price: Math.floor(Math.random() * 10 + 15),
+    const trimmedName = name.trim();
+    const value = Number(price.trim().replace(",", "."));
+
+    if (!trimmedName) {
+      Alert.alert("Xəta", "Məhsulun adını daxil edin.");
+      return;
+    }
+
+    if (isNaN(value) || value <= 0) {
+      Alert.alert("Xəta", "Qiyməti düzgün daxil edin.");
+      return;
+    }
+
+    const newProduct: Product = {
+      id: Date.now(),
+      name: trimmedName,
+      price: value,
+      category: selected,
     };
 
-    setFoodItems([newItem, ...foodItems]);
-    setNewFood("");
+    setProducts([...products, newProduct]);
+    setName("");
+    setPrice("");
     Keyboard.dismiss();
   };
 
   return (
     <View style={[styles.container, { paddingTop: StatusBar.currentHeight }]}>
-      <Header />
+      <Header count={cart.length} total={cartTotal} />
 
-      <View style={styles.cartInfo}>
-        <Text style={styles.cartText}>
-          <FontAwesome5 name="shopping-cart" size={22} color="#ef5350" />
-          Cart : {cart.length} product
-        </Text>
-      </View>
+      <FlatList
+        data={FILTERS}
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        keyExtractor={(item) => item}
+        style={styles.chipList}
+        contentContainerStyle={styles.chipContent}
+        renderItem={({ item }) => {
+          const active = item === selected;
+          return (
+            <TouchableOpacity
+              style={[styles.chip, active && styles.chipActive]}
+              onPress={() => setSelected(item)}
+            >
+              <Text style={[styles.chipText, active && styles.chipTextActive]}>
+                {CATEGORY_ICONS[item]} {item}
+              </Text>
+            </TouchableOpacity>
+          );
+        }}
+      />
+
+      <Text style={styles.hint}>
+        {selected === ALL
+          ? "Məhsul əlavə etmək üçün kateqoriya seçin"
+          : `"${selected}" kateqoriyasına məhsul əlavə et`}
+      </Text>
 
       <View style={styles.inputRow}>
         <TextInput
-          style={styles.input}
-          placeholder="Add new food"
-          value={newFood}
-          onChangeText={setNewFood}
-          onSubmitEditing={handleNewFoodSubmit}
+          style={[styles.input, styles.nameInput]}
+          placeholder="Məhsulun adı"
+          placeholderTextColor="#888"
+          value={name}
+          onChangeText={setName}
         />
-
-        <Button title="Add food" onPress={handleNewFoodSubmit}></Button>
+        <TextInput
+          style={[styles.input, styles.priceInput]}
+          placeholder="Qiymət"
+          placeholderTextColor="#888"
+          value={price}
+          onChangeText={setPrice}
+          keyboardType="decimal-pad"
+          returnKeyType="done"
+          onSubmitEditing={handleSubmit}
+        />
+        <TouchableOpacity style={styles.submitBtn} onPress={handleSubmit}>
+          <Text style={styles.submitText}>Əlavə et</Text>
+        </TouchableOpacity>
       </View>
 
-      <FlatList
-        data={foodItems}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => <FoodCard item={item} onAdd={handleAdd} />}
-        numColumns={2}
-        columnWrapperStyle={{ justifyContent: "space-between" }}
-        contentContainerStyle={{ padding: 12 }}
+      <SectionList
+        sections={sections}
+        keyExtractor={(item) => item[0].category}
+        keyboardShouldPersistTaps="handled"
+        contentContainerStyle={styles.listContent}
+        ListEmptyComponent={
+          <Text style={styles.empty}>Bu kateqoriyada məhsul yoxdur</Text>
+        }
+        renderSectionHeader={({ section }) => (
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>
+              {CATEGORY_ICONS[section.title]} {section.title}
+            </Text>
+            <Text style={styles.sectionCount}>{section.data[0].length}</Text>
+          </View>
+        )}
+        renderItem={({ item }) => (
+          <View style={styles.productRow}>
+            {item.map((product) => (
+              <ProductCard
+                key={product.id}
+                item={product}
+                onAdd={handleAddToCart}
+                onRemove={handleRemoveProduct}
+              />
+            ))}
+          </View>
+        )}
       />
     </View>
   );
@@ -379,26 +185,112 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: "#f4f6f8",
   },
-  cartInfo: {
+  chipList: {
+    flexGrow: 0,
+  },
+  chipContent: {
+    paddingHorizontal: 12,
+    paddingVertical: 12,
+    gap: 8,
     alignItems: "center",
-    padding: 10,
   },
-  cartText: {
-    fontSize: 20,
+  chip: {
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 20,
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#cfd8dc",
+  },
+  chipActive: {
+    backgroundColor: "#2e7d32",
+    borderColor: "#2e7d32",
+  },
+  chipText: {
+    color: "#333",
+    fontWeight: "600",
+  },
+  chipTextActive: {
+    color: "#fff",
+  },
+  hint: {
+    paddingHorizontal: 16,
+    marginBottom: 6,
+    color: "#555",
+    fontSize: 13,
   },
   inputRow: {
     flexDirection: "row",
-    paddingHorizontal: 16,
-    gap: 8,
     alignItems: "center",
+    paddingHorizontal: 12,
+    gap: 8,
     marginBottom: 8,
   },
   input: {
-    flex: 1,
     borderWidth: 1,
-    padding: 10,
-    borderRadius: 6,
-    borderColor: "#ccc",
+    borderColor: "#cfd8dc",
+    borderRadius: 8,
+    backgroundColor: "#fff",
+    color: "#222",
+    paddingVertical: 10,
+    paddingHorizontal: 12,
+  },
+  nameInput: {
+    flex: 2,
+  },
+  priceInput: {
+    flex: 1,
+  },
+  submitBtn: {
+    backgroundColor: "#2e7d32",
+    paddingVertical: 12,
+    paddingHorizontal: 14,
+    borderRadius: 8,
+  },
+  submitText: {
+    color: "#fff",
+    fontWeight: "600",
+  },
+  listContent: {
+    paddingHorizontal: 12,
+    paddingBottom: 32,
+    flexGrow: 1,
+  },
+  sectionHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#f4f6f8",
+    paddingVertical: 10,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#222",
+  },
+  sectionCount: {
+    minWidth: 26,
+    textAlign: "center",
+    paddingVertical: 2,
+    paddingHorizontal: 8,
+    borderRadius: 12,
+    overflow: "hidden",
+    backgroundColor: "#2e7d32",
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  productRow: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "stretch",
+  },
+  empty: {
+    textAlign: "center",
+    marginTop: 40,
+    color: "#777",
+    fontSize: 16,
   },
 });
