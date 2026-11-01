@@ -5,11 +5,17 @@ import { StyleSheet, Text, View } from "react-native";
 type HeaderProps = {
   count: number;
   total: number;
+  isLandscape: boolean;
 };
 
-export default function Header({ count, total }: HeaderProps) {
+export default function Header({ count, total, isLandscape }: HeaderProps) {
   return (
-    <View style={styles.header}>
+    <View
+      style={[
+        styles.header,
+        isLandscape ? styles.headerLandscape : styles.headerPortrait,
+      ]}
+    >
       <Text style={styles.title}>Smart Market</Text>
       <View style={styles.cartRow}>
         <FontAwesome5 name="shopping-cart" size={16} color="#fff" />
@@ -23,11 +29,18 @@ export default function Header({ count, total }: HeaderProps) {
 
 const styles = StyleSheet.create({
   header: {
-    paddingVertical: 14,
     paddingHorizontal: 16,
     backgroundColor: "#2e7d32",
     alignItems: "center",
+  },
+  headerPortrait: {
+    paddingVertical: 14,
     gap: 6,
+  },
+  headerLandscape: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    paddingVertical: 8,
   },
   title: {
     color: "#fff",
